@@ -1,5 +1,5 @@
 # vocabularyNoteBookCrawler
-**This is a crawler that crawls word analysis from Baidu translation to complete the word list**
+***This is a crawler that crawls word analysis from Baidu translation to complete the word list***
 1. Python environment needs to be configured:
 
   - Selenium package is needed.

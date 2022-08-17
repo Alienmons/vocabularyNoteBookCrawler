@@ -1,5 +1,5 @@
 # vocabularyNoteBookCrawler
-This is a crawler that crawls word analysis from Baidu translation to complete the word list
+**This is a crawler that crawls word analysis from Baidu translation to complete the word list**
 1. Python environment needs to be configured:
 
   - Selenium package is needed.
@@ -10,7 +10,7 @@ This is a crawler that crawls word analysis from Baidu translation to complete t
 
   - Pycharm is recommended.
 
-2. Use main_md.py generates. MD files (Markdown syntax). It is recommended to browse .md files by using Typora.
+2. Use main_md.py generates .md files (Markdown syntax). It is recommended to browse .md files by using Typora.
 
 3. Precautions:
 

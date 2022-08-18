@@ -10,7 +10,7 @@ from lxml import etree
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
-# 无头网页
+# 无头网页	
 chrome_options = Options()
 chrome_options.add_argument('--ignore-certificate-errors')
 chrome_options.add_argument('--headless')
@@ -27,34 +27,41 @@ response = driver.page_source
 
 # 打开.md文件
 fp = open('vocabularyNoteBook.md','a',encoding='utf-8')
-fp.write('### '+word+'\n')
 
 # xpath解析
 tree = etree.HTML(response)
 
 # 解析音标
 print("爬取音标......")
-yinbiao_en = tree.xpath('//*[@id="left-result-container"]/div[2]/div[2]/div[1]/div[2]/div[1]/div/span[1]/b/text()')[0]
-yinbiao_am = tree.xpath('//*[@id="left-result-container"]/div[2]/div[2]/div[1]/div[2]/div[1]/div/span[2]/b/text()')[0]
-fp.write('#### Phonetic symbols'+'\n'+'['+yinbiao_en+']  ['+yinbiao_am+']\n')
+yinbiao_en = tree.xpath('//*[@class="phonetic-transcription"][1]/b/text()')[0]
+yinbiao_am = tree.xpath('//*[@class="phonetic-transcription"][2]/b/text()')[0]
+fp.write('### ***'+word+'***\n')
+fp.write('#### Phonetic symbols'+'\n')
+fp.write('Britain **'+yinbiao_en+'**      '+'America **'+yinbiao_am+'**\n')
 
 # 解析词义
 print("爬取词义......")
-meanings_list = tree.xpath('//*[@id="cont-edict"]/div/div')
+meanings_list = tree.xpath('//*[@id="cont-collins"]/div/ul/li')
 fp.write('#### Meanings'+'\n')
 for meanings in meanings_list:
-    # print(type(meanings))
-    cixing = meanings.xpath('./p/text()')[0]
-    meaning_list = meanings.xpath('./dl')
-    for meaning in meaning_list:
-        mean = meaning.xpath('./dt/text()')[0]
-        translation = cixing + '. ' + mean
-        fp.write('- '+translation+'\n')
+    try:
+        cixing = meanings.xpath('./h4/div/span[1]/text()')[0]
+        translation1 = meanings.xpath('./h4/div/span[3]/text()')
+        translation2 = meanings.xpath('./h4/div/span[3]/b/text()')[0]
+        if len(translation1) == 1:
+            translation = translation2 + translation1[0]
+        if len(translation1) == 2:
+            translation = translation1[0] + translation2 + translation1[1]
+    except:
+        continue
+    fp.write('*'+cixing+'*\n')
+    fp.write(translation+'\n\n')
 
 # 解析例句
 print("爬取例句......")
 examples_list = tree.xpath('//*[@id="cont-sample"]/div/div[2]/ol/li')
 fp.write('#### Examples of use'+'\n')
+count = 0
 for examples in examples_list:
     label = examples.xpath('./label/text()')[0]
     example_list = examples.xpath('./div/p[1]/span')
@@ -62,8 +69,12 @@ for examples in examples_list:
     for example in example_list:
         ex = ex+example.xpath('./text()')[0]
     fp.write(label+'. '+ex+'\n')
+    count = count + 1
+    if count == 10:
+        break
 
 # 爬取结束
+fp.write('\n---\n')
 fp.close()
 driver.quit()
 print("爬取成功！！！")
